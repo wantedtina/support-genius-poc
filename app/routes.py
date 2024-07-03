@@ -8,10 +8,8 @@ knowledge_base = KnowledgeBase('data')
 
 # Ensure the OpenAI API key is set
 client = OpenAI(
-    base_url="https://api.gptsapi.net/v1",
-    api_key="sk-eGpa07ec077a782096252d4e83597b30db776cbb1e5kbYhb"
-    # base_url="https://api.llama-api.com",
-    # api_key="LL-DFDsVgNxOjbnjxBfNyLUi3T5M9M2NoxBBApGziwyQRNtPR4JkGgXXTJttnL4tomb"
+    base_url="your-base-url",
+    api_key="your-api-key"
 )
 
 @main.route('/')
