@@ -1,0 +1,49 @@
+{
+    "FAQs": [
+      {
+        "question": "What does the Get-Date cmdlet do?",
+        "answer": "The Get-Date cmdlet gets a DateTime object that represents the current date or a date that you specify. It can format the date and time in several .NET and UNIX formats."
+      },
+      {
+        "question": "How can I get the current date and time?",
+        "answer": "Use the command `Get-Date` to display the current system date and time in the long-date and long-time formats."
+      },
+      {
+        "question": "How can I get only the date or time element using Get-Date?",
+        "answer": "Use the `-DisplayHint` parameter with the arguments Date, Time, or DateTime. For example, `Get-Date -DisplayHint Date`."
+      },
+      {
+        "question": "How can I customize the output format of the date and time?",
+        "answer": "Use the `-Format` parameter with a .NET format specifier. For example, `Get-Date -Format 'dddd MM/dd/yyyy HH:mm K'`."
+      },
+      {
+        "question": "How can I convert the current time to UTC time?",
+        "answer": "Use the `ToUniversalTime()` method. For example, `$Time = Get-Date; $Time.ToUniversalTime()`."
+      },
+      {
+        "question": "How can I get a date's day of the year?",
+        "answer": "Use the `DayOfYear` property. For example, `(Get-Date -Year 2020 -Month 12 -Day 31).DayOfYear`."
+      },
+      {
+        "question": "How can I check if a date is adjusted for daylight saving time?",
+        "answer": "Use the `IsDaylightSavingTime()` method. For example, `$DST = Get-Date; $DST.IsDaylightSavingTime()`."
+      },
+      {
+        "question": "How can I create a timestamp for a directory name?",
+        "answer": "Use the `-Format` parameter with the format specifier 'o' and replace colons with periods. For example, `$timestamp = Get-Date -Format o | ForEach-Object { $_ -replace ':', '.' }`."
+      },
+      {
+        "question": "How can I convert a Unix timestamp to DateTime?",
+        "answer": "Use the `-UnixTimeSeconds` parameter. For example, `Get-Date -UnixTimeSeconds 1577836800`."
+      },
+      {
+        "question": "How can I return a date value interpreted as UTC?",
+        "answer": "Use the `-AsUTC` parameter. For example, `Get-Date -Date '2020-01-01T00:00:00' -AsUTC`."
+      },
+      {
+        "question": "What are some of the valid UFormat specifiers?",
+        "answer": "Some valid UFormat specifiers include `%A` for the day of the week (full name), `%m` for the month number, and `%Y` for the year in 4-digit format."
+      }
+    ]
+  }
+  

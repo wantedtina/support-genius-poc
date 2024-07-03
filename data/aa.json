@@ -1,0 +1,41 @@
+{
+    "FAQs": [
+      {
+        "question": "What is Automation 360?",
+        "answer": "Automation 360 delivers a browser-based, intuitive experience for business users to easily automate tasks and powerful tools for developers to build process automation, delivering security, governance, and control on a scalable infrastructure for IT."
+      },
+      {
+        "question": "What is included in Automation 360?",
+        "answer": "Everything to build the bots you need to automate your business processes: Control Room cluster, Bot editor, Bot Runner, Universal Recorder, Enterprise-grade security certifications, support, access to the Bot Store, and courses on Automation Anywhere University."
+      },
+      {
+        "question": "How is Automation 360 deployed?",
+        "answer": "Automation 360 can be deployed On-Premises as well as in the Cloud. On-Premises deployment is installed on the customer's servers. The web-based Bot Creator reduces TCO by requiring no user machine installation. Cloud deployment offers a turnkey solution where Automation Anywhere handles infrastructure, providing admins with user management, security, governance, and control features accessible via web browser."
+      },
+      {
+        "question": "What additional cloud hosting options are available?",
+        "answer": "Automation 360 can be hosted on AWS, Microsoft Azure, Google Cloud, IBM, and any public, private, or hybrid cloud service."
+      },
+      {
+        "question": "How is Automation 360 delivered?",
+        "answer": "Automation 360 is delivered in Cloud or On-Premises versions, offering an end-to-end platform for automating business processes. The Community Edition provides a free web-based option with limited features for small organizations."
+      },
+      {
+        "question": "What scripting languages does Automation 360 support?",
+        "answer": "Automation 360 supports JavaScript, Python, and VBScript."
+      },
+      {
+        "question": "Is Automation 360 available in languages other than English?",
+        "answer": "Yes, Automation 360 is available in English, French, German, Japanese, Korean, Portuguese (Brazil), Spanish, and Traditional Chinese."
+      },
+      {
+        "question": "How is Automation 360 updated?",
+        "answer": "For Cloud deployments, customers receive the latest version with regular updates by Automation Anywhere. On-Premises customers receive regular updates through the customer portal."
+      },
+      {
+        "question": "What are some of the data privacy and security aspects of Automation 360?",
+        "answer": "Automation Anywhere Cloud includes comprehensive security and encrypts data in transit and at rest. No personal data leaves the environment unless directed. Security standards include NIST Cybersecurity Framework, AWS Cloud Adaption Framework, and CIS baselines."
+      }
+    ]
+  }
+  
