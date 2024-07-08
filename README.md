@@ -9,11 +9,14 @@ This is an enhanced ChatGPT bot built with Flask and OpenAI's API. The bot is de
     ```
     pip install -r requirements.txt
     ```
-3. Set the OpenAI API key as an environment variable:
+3. Add your prompt template to `/prompt`
+3. Set the OpenAI API key, base url, prompt template as an environment variable in .env (you may need to create one if not existed in workspace):
     ```
-    export OPENAI_API_KEY='your-api-key'
+    OPENAI_API_KEY=xxx
+    OPENAI_BASE_URL=https://xxx
+    PROMPT_TEMPLATE=prompt/prompt_template.json
     ```
-4. Add your knowledge base to `data/knowledge_base.json`.
+4. Add your knowledge base to `/data`.
 5. Run the application:
     ```
     python run.py
