@@ -20,12 +20,12 @@ class KnowledgeIndexer:
         # self.load_html(self.data)
         # self.load_json(self.data)
         chroma_client = chromadb.PersistentClient(path=folder_path)
-        embedding_function = OpenAIEmbeddingFunction(api_key=Config.OPENAI_API_KEY, api_base=Config.OPENAI_BASE_URL, model_name="text-embedding-ada-002")
+        embedding_function = OpenAIEmbeddingFunction(api_key=Config.OPENAI_API_KEY, api_base=Config.OPENAI_BASE_URL, model_name=Config.EMBED_MODEL)
         self.collection = chroma_client.get_or_create_collection(name='aa_content', embedding_function=embedding_function)
         self.populate_collection()
 
     def load_pdf(self, combined_data):
-        # combined_data = []
+        combined_data = []
         for filename in os.listdir(self.folder_path):
             if filename.endswith('.pdf'):
                 file_path = os.path.join(self.folder_path, filename)
@@ -52,12 +52,7 @@ class KnowledgeIndexer:
     #         if filename.endswith('.json'):
     #             file_path = os.path.join(self.folder_path, filename)
     #             with open(file_path, 'r') as file:
-    #                 loader = JSONLoader(
-    #                     file_path=file_path,
-    #                     jq_schema='.FAQs[]',
-    #                     text_content=False
-    #                     )
-    #                 data = loader.load()
+    #                 data = json.load(file)
     #                 combined_data.append(data)
     #     return combined_data
 

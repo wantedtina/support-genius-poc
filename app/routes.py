@@ -34,7 +34,7 @@ def chat():
     complete_prompt = prompt_template.format(knowledge=knowledge_text, question=prompt)
 
     response = client.chat.completions.create(
-        model="gpt-4",
+        model=Config.LLM_MODEL,
         messages=[
             {"role": "system", "content": "You are a support assistant for Automation Anywhere."},
             {"role": "user", "content": complete_prompt}
