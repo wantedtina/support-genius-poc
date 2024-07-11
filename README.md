@@ -15,6 +15,8 @@ This is an enhanced ChatGPT bot built with Flask and OpenAI's API. The bot is de
     OPENAI_API_KEY=xxx
     OPENAI_BASE_URL=https://xxx
     PROMPT_TEMPLATE=prompt/prompt_template.json
+    LLM_MODEL=gpt-4
+    EMBED_MODEL=text-embedding-ada-002
     ```
 4. Add your knowledge base to `/data`.
 5. Run the application:
