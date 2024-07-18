@@ -1,8 +1,8 @@
 
 Flask
 openai
-chromadb
 pypdf
 langchain-community
-beautifulsoup4
-unstructured
+faiss-cpu
+langchain-openai
+ollama

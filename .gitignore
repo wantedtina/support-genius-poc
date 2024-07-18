@@ -163,4 +163,4 @@ cython_debug/
 
 #knowledge base
 data/
-data_bak/
+data_bak/faiss_index/
