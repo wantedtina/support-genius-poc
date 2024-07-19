@@ -10,8 +10,8 @@ class KnowledgeIndexer:
     def __init__(self, folder_path):
         self.folder_path = folder_path
         self.data = self.load_pdf()
-        embeddings = OpenAIEmbeddings()
-        # embeddings = OllamaEmbeddings(model="llama3")
+        # embeddings = OpenAIEmbeddings()
+        embeddings = OllamaEmbeddings(model="llama3")
         if os.path.exists("faiss_index"):
             print(f"Loading index from")
             self.collection = FAISS.load_local(

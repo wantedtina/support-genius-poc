@@ -1,0 +1,151 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.container {
+    text-align: center;
+    width: 90%;
+}
+.title {
+    font-size: 36px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+.chat-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+.chat-container {
+    width: 45%;
+    height: 600px; /* 固定高度 */
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.chat-header {
+    background: #4CAF50;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+}
+.chat-box {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    height: calc(100% - 40px); /* 确保聊天框占满剩余空间 */
+}
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    font-size: 16px;
+}
+.chat-input button {
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+.message {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 70%;
+}
+.message img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+.message.user {
+    background: #4CAF50;
+    color: white;
+    align-self: flex-end;
+}
+.message.user img {
+    order: 2;
+    margin-left: 10px;
+    margin-right: 0;
+}
+.message.bot {
+    background: #f1f1f1;
+    color: black;
+    align-self: flex-start;
+}
+.review-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+.review-actions {
+    margin-top: 10px;
+}
+.review-actions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+.approve-button {
+    background: #4CAF50;
+    color: white;
+}
+.reject-button {
+    background: #f44336;
+    color: white;
+}
+/* 动画效果 */
+.dots {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: #333;
+    margin-left: 2px;
+    animation: blink 1s infinite step-start both;
+}
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+.dots:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.dots:nth-child(3) {
+    animation-delay: 0.4s;
+}
+.approved {
+    color: green;
+    font-weight: bold;
+}
+.rejected {
+    color: red;
+    font-weight: bold;
+}
