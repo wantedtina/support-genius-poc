@@ -1,5 +1,5 @@
-
 import os
+
 
 class Config:
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -7,3 +7,4 @@ class Config:
     PROMPT_TEMPLATE = os.getenv('PROMPT_TEMPLATE')
     LLM_MODEL = os.getenv('LLM_MODEL')
     EMBED_MODEL = os.getenv('EMBED_MODEL')
+    PROMPT_PATH = os.getenv('PROMPT_PATH')
