@@ -1,12 +1,23 @@
 from flask import Blueprint, request, jsonify, render_template
 from openai import OpenAI
 from .knowledge_indexer import KnowledgeIndexer
+from .data_processor import get_data_processor
+from .vector_db import get_vector_db
 from config import Config
 import json
 import ollama
 from tools.prompt_loader import PromptLoader
+import yaml
 
 main = Blueprint('main', __name__)
+
+# 加载配置
+# def load_config(path):
+#     with open(path, 'r') as file:
+#         return yaml.load(file, Loader=yaml.FullLoader)
+
+# config = load_config('config.yaml')
+
 knowledge_indexer_confluence = KnowledgeIndexer('data')
 knowledge_indexer_sn = KnowledgeIndexer('data')
 
@@ -34,9 +45,20 @@ def chat(channel):
     prompt = data.get('prompt', '')
     send_to_reviewer = data.get('send_to_reviewer', False)
 
-    # get knowledge base
-    # relevant_docs = knowledge_indexer.search(prompt)
-    # knowledge_text = "\n".join(relevant_docs)
+    # channel_config = next((ch for ch in config['channels'] if ch['name'] == channel), None)
+    # if not channel_config:
+    #     return jsonify({'response': "Invalid channel"})
+    
+    # processor = get_data_processor(channel_config['data_processor'])
+    # vector_db = get_vector_db(channel_config['vector_db'], channel_config['db_config'])
+
+     # 假设get_data_from_source方法从数据源获取数据
+    # data = get_data_from_source(channel_config['data_source'])
+    # processed_data = processor.process(data)
+    # vector_db.store(processed_data)
+
+    # relevant_docs = vector_db.search(prompt)
+    # prompt_template = PromptLoader(Config.PROMPT_PATH).load_prompt(channel_config['prompt'], "extract_query")
 
     if channel == 'confluence':
         relevant_docs = knowledge_indexer_confluence.search(prompt)
