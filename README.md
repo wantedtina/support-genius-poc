@@ -14,7 +14,6 @@ This is an enhanced ChatGPT bot built with Flask and OpenAI's API. The bot is de
     ```
     OPENAI_API_KEY=xxx
     OPENAI_BASE_URL=https://xxx
-    PROMPT_TEMPLATE=prompt/prompt_template.json
     LLM_MODEL=gpt-4
     EMBED_MODEL=text-embedding-ada-002
     PROMPT_PATH=prompt/
@@ -28,3 +27,4 @@ This is an enhanced ChatGPT bot built with Flask and OpenAI's API. The bot is de
 ## Usage
 
 Open your browser and navigate to `http://127.0.0.1:5000` to interact with the support assistant bot.
+navigate to `http://127.0.0.1:5000/reviewer` to interact with the reviewer box.

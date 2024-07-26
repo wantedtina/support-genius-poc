@@ -4,53 +4,82 @@ from .knowledge_indexer import KnowledgeIndexer
 from config import Config
 import json
 import ollama
+from tools.prompt_loader import PromptLoader
 
 main = Blueprint('main', __name__)
-knowledge_indexer = KnowledgeIndexer('data')
+knowledge_indexer_confluence = KnowledgeIndexer('data')
+knowledge_indexer_sn = KnowledgeIndexer('data')
 
-# Load prompt template from JSON file
-with open(Config.PROMPT_TEMPLATE, 'r') as file:
-    prompt_template = json.load(file)['template']
+# Load prompt template from yaml file
+prompt_template_confluence = PromptLoader(Config.PROMPT_PATH).load_prompt("prompt_confluence", "extract_query")
+prompt_template_sn = PromptLoader(Config.PROMPT_PATH).load_prompt("prompt_sn", "extract_query")
 
 # Ensure the OpenAI API key is set
-# client = OpenAI(
-#     base_url=Config.OPENAI_BASE_URL,
-#     api_key=Config.OPENAI_API_KEY
-# )
+client = OpenAI(
+    base_url=Config.OPENAI_BASE_URL,
+    api_key=Config.OPENAI_API_KEY
+)
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('user_chat.html')
 
-@main.route('/chat', methods=['POST'])
-def chat():
+@main.route('/reviewer')
+def reviewer():
+    return render_template('reviewer_chat.html')
+
+@main.route('/chat/<channel>', methods=['POST'])
+def chat(channel):
     data = request.json
     prompt = data.get('prompt', '')
+    send_to_reviewer = data.get('send_to_reviewer', False)
 
     # get knowledge base
-    relevant_docs = knowledge_indexer.search(prompt)
+    # relevant_docs = knowledge_indexer.search(prompt)
+    # knowledge_text = "\n".join(relevant_docs)
+
+    if channel == 'confluence':
+        relevant_docs = knowledge_indexer_confluence.search(prompt)
+        prompt_template = prompt_template_confluence
+    elif channel == 'sn':
+        relevant_docs = knowledge_indexer_sn.search(prompt)
+        prompt_template = prompt_template_sn
+    else:
+        return jsonify({'response': "Invalid channel"})
+
     knowledge_text = "\n".join(relevant_docs)
-
     complete_prompt = prompt_template.format(knowledge=knowledge_text, question=prompt)
-    print(complete_prompt)
 
-    # response = client.chat.completions.create(
-    #     model=Config.LLM_MODEL,
-    #     messages=[
-    #         {"role": "system", "content": "You are a support assistant for Automation Anywhere."},
-    #         {"role": "user", "content": complete_prompt}
-    #     ],
-    #     timeout=60  # Increase timeout to 60 seconds
-    # )
-    # return jsonify({'response': response.choices[0].message.content})
-    response = ollama.chat(
-        model='llama3', 
+    response = client.chat.completions.create(
+        model=Config.LLM_MODEL,
         messages=[
             {"role": "system", "content": "You are a support assistant for Automation Anywhere."},
             {"role": "user", "content": complete_prompt}
-        ]
+        ],
+        timeout=60  # Increase timeout to 60 seconds
     )
-    return jsonify({'response': response['message']['content']})
+    
+    # response = ollama.chat(
+    #     model='llama3', 
+    #     messages=[
+    #         {"role": "system", "content": "You are a support assistant for Automation Anywhere."},
+    #         {"role": "user", "content": complete_prompt}
+    #     ]
+    # )
+    # return jsonify({'response': response['message']['content']})
+
+    api_response = response.choices[0].message.content
+    if send_to_reviewer:
+        add_pending_review(api_response, prompt)
+        return jsonify({'response': api_response})
+    else:
+        send_to_user(api_response, prompt)
+        return jsonify({'response': api_response})
+
+@main.route('/pending_reviews')
+def pending_reviews():
+    # 返回待审核的响应
+    return jsonify({'reviews': get_pending_reviews()})
 
 @main.route('/review', methods=['POST'])
 def review():
@@ -60,6 +89,39 @@ def review():
     user_prompt = data.get('user_prompt', '')
 
     if action == 'approve':
+        # 将批准的响应发送回用户
+        send_to_user(response, user_prompt)
         return jsonify({'response': response})
-    else:
+    elif action == 'reject':
+        # 将拒绝的响应发送回用户
+        send_to_user("Sorry, it is out of my scope", user_prompt)
         return jsonify({'response': "Sorry, it is out of my scope"})
+    elif action == 'pending':
+        # 将待审核的响应存储到全局变量或数据库
+        add_pending_review(response, user_prompt)
+        return jsonify({'status': 'pending'})
+
+@main.route('/user_responses')
+def user_responses():
+    # 返回所有用户的响应
+    return jsonify({'responses': get_user_responses()})
+
+# 全局变量或数据库管理待审核响应
+pending_reviews = []
+user_responses = []
+
+def get_pending_reviews():
+    return pending_reviews
+
+def add_pending_review(response, user_prompt):
+    pending_reviews.append({'response': response, 'user_prompt': user_prompt})
+
+def get_user_responses():
+    global user_responses
+    responses = user_responses
+    user_responses = []  # 清空用户响应列表
+    return responses
+
+def send_to_user(response, user_prompt):
+    user_responses.append({'response': response, 'user_prompt': user_prompt})
+    print(f"Response to user ({user_prompt}): {response}")

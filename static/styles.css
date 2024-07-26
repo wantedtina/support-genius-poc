@@ -13,13 +13,15 @@ body {
 }
 .title {
     font-size: 36px;
-    color: #4CAF50;
+    color: #003B70; /* Ateneo Blue */
     margin-bottom: 20px;
 }
-.chat-wrapper {
+.chat-container-wrapper {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 .chat-container {
     width: 45%;
@@ -32,11 +34,23 @@ body {
     flex-direction: column;
 }
 .chat-header {
-    background: #4CAF50;
+    background: #003B70; /* Ateneo Blue */
     padding: 10px;
     color: white;
     text-align: center;
     font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.chat-header button {
+    background: #D9261C; /* Maximum Red */
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
 }
 .chat-box {
     flex: 1;
@@ -47,7 +61,21 @@ body {
 }
 .chat-input {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     border-top: 1px solid #ddd;
+}
+.chat-input p {
+    margin: 10px 0;
+}
+.chat-input button {
+    padding: 10px 20px;
+    border: none;
+    background: #003B70; /* Ateneo Blue */
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
 }
 .chat-input input {
     flex: 1;
@@ -56,14 +84,8 @@ body {
     border-radius: 0;
     outline: none;
     font-size: 16px;
-}
-.chat-input button {
-    padding: 10px 20px;
-    border: none;
-    background: #4CAF50;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
+    width: 100%;  /* 添加这一行以确保输入框占满可用宽度 */
+    box-sizing: border-box;  /* 添加这一行以包括内边距在内的总宽度 */
 }
 .message {
     display: flex;
@@ -80,7 +102,7 @@ body {
     border-radius: 50%;
 }
 .message.user {
-    background: #4CAF50;
+    background: #003B70; /* Ateneo Blue */
     color: white;
     align-self: flex-end;
 }
@@ -110,11 +132,11 @@ body {
     font-size: 16px;
 }
 .approve-button {
-    background: #4CAF50;
+    background: #003B70; /* Ateneo Blue */
     color: white;
 }
 .reject-button {
-    background: #f44336;
+    background: #D9261C; /* Maximum Red */
     color: white;
 }
 /* 动画效果 */
@@ -148,4 +170,64 @@ body {
 .rejected {
     color: red;
     font-weight: bold;
+}
+/* 开关按钮样式 */
+.switch-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+    margin-right: 10px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #003B70; /* Ateneo Blue */
+}
+input:checked + .slider:before {
+    transform: translateX(14px);
+}
+/* 渠道按钮样式 */
+.channel-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+.channel-button {
+    text-align: center;
+}
+.channel-button p {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
 }
