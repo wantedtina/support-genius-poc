@@ -70,19 +70,19 @@ def chat(channel):
     # prompt_template = PromptLoader(Config.PROMPT_PATH).load_prompt(channel_config['prompt'], "extract_query")
 
     if channel == 'confluence':
-        relevant_docs = knowledge_indexer_confluence.search(prompt)
+        relevant_docs = knowledge_indexer_confluence.search(channel, prompt)
         prompt_template = prompt_template_confluence
         knowledge_text = "\n".join(relevant_docs)
     elif channel == 'sn':
-        relevant_docs = knowledge_indexer_sn.search(prompt)
+        relevant_docs = knowledge_indexer_sn.search(channel, prompt)
         prompt_template = prompt_template_sn
         knowledge_text = ''
         for doc in relevant_docs:
             knowledge_text += doc.page_content + "\n"
-        print("knowledge_text: " + knowledge_text)
     else:
         return jsonify({'response': "Invalid channel"})
-    # knowledge_text = "\n".join(relevant_docs)
+    
+    print("knowledge_text: " + knowledge_text)
 
     complete_prompt = prompt_template.format(knowledge=knowledge_text, question=prompt)
 

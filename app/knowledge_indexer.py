@@ -87,8 +87,10 @@ class KnowledgeIndexer:
                     metadatas=[page.metadata]
                 )
 
-    def search(self, query, top_k=3):
+    def search(self, channel, query, top_k=3):
         results = self.collection.similarity_search(query=query, k=top_k)
-        # filtered_results = self.filter_by_time(results, start_time, end_time)
-        print("results: " + str(results))
-        return results
+        if channel == 'confluence':
+            return results[0].page_content
+        elif channel == 'sn':
+            return results
+        
