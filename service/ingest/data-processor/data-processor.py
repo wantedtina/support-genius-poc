@@ -1,16 +1,9 @@
+from confluence_processor import ConfluenceProcessor
+from sn_processor import ServiceNowProcessor
+
 class DataProcessor:
     def process(self, data):
         raise NotImplementedError("Subclasses should implement this!")
-
-class ConfluenceProcessor(DataProcessor):
-    def process(self, data):
-        # Confluence数据处理逻辑
-        pass
-
-class ServiceNowProcessor(DataProcessor):
-    def process(self, data):
-        # Service Now数据处理逻辑
-        pass
 
 def get_data_processor(processor_name):
     processors = {

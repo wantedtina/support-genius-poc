@@ -1,5 +1,5 @@
 from tools.prompt_loader import PromptLoader
-from config import Config
+from backend.config import Config
 
 
 def test_loader_prompt():

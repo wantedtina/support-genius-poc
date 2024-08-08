@@ -86,5 +86,5 @@ async function reviewResponse(action) {
 // 页面加载时获取待审核响应
 window.onload = function() {
     fetchPendingResponses(); // 初次加载时获取待审核响应
-    setInterval(fetchPendingResponses, 3000); // 每5秒刷新一次待审核响应
+    setInterval(fetchPendingResponses, 3000); // 每3秒刷新一次待审核响应
 };

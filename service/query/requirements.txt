@@ -5,5 +5,6 @@ langchain-community
 faiss-cpu
 tiktoken==0.5.2
 langchain-openai
+langchain
 ollama
 pytest

@@ -19,8 +19,8 @@ class KnowledgeIndexer:
         elif file_type == 'html':
             self.data = self.load_html()
 
-        embeddings = OpenAIEmbeddings()
-        # embeddings = OllamaEmbeddings(model="llama3")
+        # embeddings = OpenAIEmbeddings()
+        embeddings = OllamaEmbeddings(model="llama3")
         if os.path.exists(target_folder_path):
             print(f"Loading index from")
             self.collection = FAISS.load_local(

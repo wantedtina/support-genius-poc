@@ -3,16 +3,12 @@ import os.path
 from flask import Blueprint, request, jsonify, render_template
 from openai import OpenAI
 from .knowledge_indexer import KnowledgeIndexer
-from .data_processor import get_data_processor
-from .vector_db import get_vector_db
 from config import Config
 import json
 import ollama
 from tools.prompt_loader import PromptLoader
-from config import Config
 import glob
 from datetime import date
-from tools.prompt_loader import PromptLoader
 import yaml
 
 main = Blueprint('main', __name__)
@@ -36,17 +32,6 @@ client = OpenAI(
     base_url=Config.OPENAI_BASE_URL,
     api_key=Config.OPENAI_API_KEY
 )
-
-
-@main.route('/')
-def index():
-    return render_template('user_chat.html')
-
-
-@main.route('/reviewer')
-def reviewer():
-    return render_template('reviewer_chat.html')
-
 
 @main.route('/chat/<channel>', methods=['POST'])
 def chat(channel):
