@@ -1,4 +1,3 @@
-from apscheduler.schedulers.blocking import BlockingScheduler
 from sqlalchemy import create_engine, MetaData, Table, Column, String, DateTime
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -6,70 +5,52 @@ import os
 import uuid
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OllamaEmbeddings
+from .data_loader import JsonLoader, HtmlLoader, PdfLoader
+from .data_processor import JsonProcessor, HtmlProcessor, PdfProcessor
+from .db.vector_db import VectorDB
+from .utils.config_loader import load_config
+from .prompt_template.template_loader import TemplateLoader
 
-# Database configuration
-db_url = 'postgresql://user:password@localhost:5432/yourdatabase'
-engine = create_engine(db_url)
-Session = sessionmaker(bind=engine)
-metadata = MetaData()
+# 加载配置
+config = load_config('config/channel_config.yaml')
 
-# Define the documents table
-documents_table = Table('documents', metadata,
-                        Column('id', String, primary_key=True),
-                        Column('content', String),
-                        Column('create_time', DateTime))
+# 动态加载组件
+data_loaders = {
+    "json": JsonLoader,
+    "html": HtmlLoader,
+    "pdf": PdfLoader
+}
 
-# Create the table if it doesn't exist
-metadata.create_all(engine)
+data_processors = {
+    "json": JsonProcessor,
+    "html": HtmlProcessor,
+    "pdf": PdfProcessor
+}
 
-# FAISS configuration
-faiss_index_path = 'faiss_index/knowledge_index'
-embeddings = OllamaEmbeddings(model="llama3")
-if os.path.exists(faiss_index_path):
-    collection = FAISS.load_local(
-        folder_path=faiss_index_path,
-        embeddings=embeddings,
-        allow_dangerous_deserialization=True
-    )
-else:
-    collection = FAISS([], embeddings)
-    collection.save_local(faiss_index_path)
+vector_dbs = {
+    "vector": VectorDB,
+    # 可以添加其他类型的数据库
+}
 
-def fetch_data_from_sources():
-    # Implement your data fetching logic here
-    return [
-        {'id': str(uuid.uuid4()), 'content': 'Sample document 1', 'create_time': datetime.utcnow()},
-        {'id': str(uuid.uuid4()), 'content': 'Sample document 2', 'create_time': datetime.utcnow()},
-    ]
+template_loader = TemplateLoader(config['template_path'])
 
-def ingest_data_into_db():
-    session = Session()
-    try:
-        data = fetch_data_from_sources()
-        for item in data:
-            ins = documents_table.insert().values(
-                id=item['id'],
-                content=item['content'],
-                create_time=item['create_time']
-            )
-            session.execute(ins)
+def main(channel):
+    channel_config = config['channels'].get(channel)
+     # 加载数据
+    loader_class = data_loaders[channel_config['data_loader']]
+    loader = loader_class(channel_config['data_source'])
+    raw_data = loader.load_data()
 
-            # Add to FAISS
-            doc = Document(page_content=item['content'], metadata={'timestamp': item['create_time']})
-            collection.add_documents([doc])
+    # 加载提示模板用于Indexing, retrieval, generation
+    prompt_template_index = TemplateLoader.load_template(channel_config['prompt_template_index'])
+    prompt_template_retrieval = TemplateLoader.load_template(channel_config['prompt_template_retrieval'])
 
-        session.commit()
-        collection.save_local(faiss_index_path)
-        print(f'Ingested {len(data)} documents into the database and FAISS.')
-    except Exception as e:
-        session.rollback()
-        print(f'Error ingesting data: {e}')
-    finally:
-        session.close()
+    # 处理数据
+    processor_class = data_processors[channel_config['data_processor']]
+    processor = processor_class()
+    processed_data = processor.process(raw_data)
 
-if __name__ == '__main__':
-    scheduler = BlockingScheduler()
-    scheduler.add_job(ingest_data_into_db, 'interval', hours=1)
-    print('Starting data ingestion service...')
-    ingest_data_into_db()  # Initial run
-    scheduler.start()
+    # 存储数据
+    db_class = vector_dbs[channel_config['db_type']]
+    db = db_class(channel_config['db_path'])
+    db.store(processed_data)

@@ -1,0 +1,30 @@
+openai:
+  base_url: "https://api.openai.com/v1"
+  api_key: "your_openai_api_key"
+  model: "text-davinci-003"
+
+template_path: "app/prompt_templates/"
+
+channels:
+  confluence:
+    data_loader: "json"
+    data_source: "data/confluence"
+    data_processor: "json"
+    db_type: "vector"
+    db_path: "faiss_index/confluence"
+    prompt_template: "prompt_template"
+    prompt_template_translator: "prompt_template_translator"
+    prompt_template_routing: "prompt_template_routing"
+    prompt_template_constructor: "prompt_template_constructor"
+
+  sn:
+    data_loader: "json"
+    data_source: "data/serviceNow"
+    data_processor: "json"
+    db_type: "vector"
+    db_path: "faiss_index/serviceNow"
+    prompt_template: "prompt_template"
+    prompt_template_translator: "prompt_template_translator"
+    prompt_template_routing: "prompt_template_routing"
+    prompt_template_constructor: "prompt_template_constructor"
+  # 可以继续添加更多Case

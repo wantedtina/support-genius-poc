@@ -2,6 +2,9 @@
 
 This is an enhanced ChatGPT bot built with Flask and OpenAI's API. The bot is designed as a support assistant for specific technical issues.
 
+## Framework
+![framework](./assests/images/framework.png)
+
 ## Setup
 
 1. Clone the repository.
