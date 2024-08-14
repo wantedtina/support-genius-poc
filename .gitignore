@@ -129,6 +129,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+poc1
 
 # Spyder project settings
 .spyderproject
@@ -163,4 +164,5 @@ cython_debug/
 
 #knowledge base
 data/
-data_bak/faiss_index/
+data_bak/
+faiss_index/
