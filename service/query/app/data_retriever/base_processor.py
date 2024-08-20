@@ -5,5 +5,5 @@ class BaseProcessor(ABC):
         self.template_loader = template_loader
         self.llm = llm
     @abstractmethod
-    def process(self, query):
+    def process(self, results: list[list]):
         pass

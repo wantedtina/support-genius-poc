@@ -1,0 +1,78 @@
+template_path: "app/prompt_templates/"
+
+channels:
+  confluence:
+    db_configs:
+      - name: "vector_db"
+        type: "vector"
+        path: "faiss_index/confluence"
+        embeddings_model: "ollama"       
+    query_processor:
+      - name: "query_translator"
+        params: 
+          llm:
+            type: "ollama"
+            model: "llama3"
+            base_url: "http://localhost:11434/api/chat"
+            api_key: "your_openai_api_key"
+      - name: "query_logical_routing"
+        params: 
+          llm:
+            type: "ollama"
+            model: "llama3"
+            base_url: "http://localhost:11434/api/chat"
+            api_key: "your_openai_api_key"
+      - name: "query_constructor"
+        params: 
+          llm:
+            type: "ollama"
+            model: "llama3"
+            base_url: "http://localhost:11434/api/chat"
+            api_key: "your_openai_api_key"
+    data_retrieval: "reranking"
+    system_prompt: "You are a support assistant for Automation Anywhere."
+    prompt_template: "prompt_confluence"
+    llm:
+      type: "ollama"
+      model: "llama3"
+      base_url: "http://localhost:11434/api/chat"
+      api_key: "your_openai_api_key"
+
+  sn:
+    db_configs:
+      - name: "vector_db"
+        type: "vector"
+        path: "faiss_index/serviceNow"
+        embeddings_model: "openai"
+    query_processor:
+      - name: "query_translator"
+        params: 
+          llm:
+            type: "openai"
+            model: "gpt-4"
+            base_url: "https://api.gptsapi.net/v1"
+            api_key: "sk-eGpa07ec077a782096252d4e83597b30db776cbb1e5kbYhb"
+      - name: "query_logical_routing"
+        params: 
+          llm:
+            type: "openai"
+            model: "gpt-4"
+            base_url: "https://api.gptsapi.net/v1"
+            api_key: "sk-eGpa07ec077a782096252d4e83597b30db776cbb1e5kbYhb"
+      - name: "query_constructor"
+        params: 
+          llm:
+            type: "openai"
+            model: "gpt-4"
+            base_url: "https://api.gptsapi.net/v1"
+            api_key: "sk-eGpa07ec077a782096252d4e83597b30db776cbb1e5kbYhb"
+    data_retrieval: "reranking"
+    system_prompt: "You are a support assistant for Automation Anywhere."
+    prompt_template: "prompt_sn"
+    llm:
+      type: "openai"
+      model: "gpt-4"
+      base_url: "https://api.gptsapi.net/v1"
+      api_key: "sk-eGpa07ec077a782096252d4e83597b30db776cbb1e5kbYhb"
+
+  # Add more use case

@@ -1,5 +1,5 @@
-extract_query: |-
-    # CONTEXT #
+template: |
+   # CONTEXT #
     This is a support chat application called Support Genius.
     # OBJECTIVE #
     Provide accurate and helpful information based on the user's question using the knowledge base.

@@ -1,11 +1,8 @@
 import os
 
 class GraphDB:
-    def __init__(self, target_folder_path, embeddings_model="llama3"):
-        pass
-    
-    def store(self, documents):
+    def __init__(self, db_path):
         pass
 
-    def search(self, query, top_k=3):
+    def search(self, query):
         pass

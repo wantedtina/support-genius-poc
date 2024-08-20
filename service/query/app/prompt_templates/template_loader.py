@@ -11,4 +11,4 @@ class TemplateLoader:
             raise FileNotFoundError(f"Template {template_name} not found at {template_path}")
         
         with open(template_path, 'r') as file:
-            return yaml.load(file, Loader=yaml.FullLoader)
+            return yaml.load(file, Loader=yaml.FullLoader)['template']

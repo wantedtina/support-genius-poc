@@ -1,95 +1,158 @@
-import os.path
-
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify
 from openai import OpenAI
-from .knowledge_indexer import KnowledgeIndexer
-from config import Config
-import json
 import ollama
-from tools.prompt_loader import PromptLoader
-import glob
-from datetime import date
-import yaml
+from .utils.config_loader import load_config
+from .prompt_templates.template_loader import TemplateLoader
+from .query_processor import QueryTranslator, LogicalRouting, SemanticRouting, QueryConstructor
+from .db.es_db import EsDB
+from .db.graph_db import GraphDB
+from .db.sql_db import SqlDB
+from .db.vector_db import VectorDB
+from .data_retriever import Reranking
 
 main = Blueprint('main', __name__)
 
-# 加载配置
-# def load_config(path):
-#     with open(path, 'r') as file:
-#         return yaml.load(file, Loader=yaml.FullLoader)
+# Load Config
+config = load_config('app/config/channel_config.yaml')
 
-# config = load_config('config.yaml')
+# Load Query Processor
+query_processors = {
+    "query_translator": QueryTranslator,
+    "query_logical_routing": LogicalRouting,
+    "query_semantic_routing": SemanticRouting,
+    "query_constructor": QueryConstructor
+}
 
-knowledge_indexer_confluence = KnowledgeIndexer('data', 'faiss_index/confluence', 'pdf')
-knowledge_indexer_sn = KnowledgeIndexer('data', 'faiss_index/serviceNow', 'json')
+# Load DB
+db_classes = {
+    "vector": VectorDB,
+    "sql": SqlDB,
+    "es": EsDB,
+    "graph": GraphDB
+}
+
+# Load Data Retriever
+data_retriever = {
+    "reranking": Reranking,
+}
 
 # Load prompt template from yaml file
-prompt_template_confluence = PromptLoader(Config.PROMPT_PATH).load_prompt("prompt_confluence", "extract_query")
-prompt_template_sn = PromptLoader(Config.PROMPT_PATH).load_prompt("prompt_sn", "extract_query")
+template_loader  = TemplateLoader(config['template_path'])
 
-# Ensure the OpenAI API key is set
-client = OpenAI(
-    base_url=Config.OPENAI_BASE_URL,
-    api_key=Config.OPENAI_API_KEY
-)
+# Set up LLM Client
+def create_llm_client(llm_config):
+    if llm_config['type'] == "openai":
+        return OpenAI(
+            base_url=llm_config['base_url'],
+            api_key=llm_config['api_key']
+        )
+    elif llm_config['type'] == "ollama":
+        return ollama.Client(
+            # base_url=llm_config['base_url'],
+            # api_key=llm_config['api_key']
+        )
+    else:
+        raise ValueError(f"Unsupported LLM type: {llm_config['type']}")
 
 @main.route('/chat/<channel>', methods=['POST'])
 def chat(channel):
+    channel_config = config['channels'].get(channel)
+    if not channel_config:
+        return jsonify({'response': "Invalid channel"})
+
     data = request.json
     prompt = data.get('prompt', '')
     send_to_reviewer = data.get('send_to_reviewer', False)
 
-    # channel_config = next((ch for ch in config['channels'] if ch['name'] == channel), None)
-    # if not channel_config:
-    #     return jsonify({'response': "Invalid channel"})
+    # Instance LLM Client
+    llm_type = channel_config['llm']['type']
+    llm_client = create_llm_client(channel_config['llm'])
 
-    # processor = get_data_processor(channel_config['data_processor'])
-    # vector_db = get_vector_db(channel_config['vector_db'], channel_config['db_config'])
+    # Load prompt templates for each steps
+    prompt_template =  template_loader.load_template(channel_config['prompt_template'])
 
-    # 假设get_data_from_source方法从数据源获取数据
-    # data = get_data_from_source(channel_config['data_source'])
-    # processed_data = processor.process(data)
-    # vector_db.store(processed_data)
+    # Initialize the list of queries
+    queries = [prompt]  # Start with the original query
 
-    # relevant_docs = vector_db.search(prompt)
-    # prompt_template = PromptLoader(Config.PROMPT_PATH).load_prompt(channel_config['prompt'], "extract_query")
+     # Define the required running order
+    processor_order = ["query_translator", "query_logical_routing", "query_semantic_routing", "query_constructor"]
 
-    if channel == 'confluence':
-        relevant_docs = knowledge_indexer_confluence.search(channel, prompt)
-        prompt_template = prompt_template_confluence
-        knowledge_text = "\n".join(relevant_docs)
-    elif channel == 'sn':
-        relevant_docs = knowledge_indexer_sn.search(channel, prompt)
-        prompt_template = prompt_template_sn
-        knowledge_text = ''
-        for doc in relevant_docs:
-            knowledge_text += doc.page_content + "\n"
-    else:
-        return jsonify({'response': "Invalid channel"})
+    # Implement query processors
+    # TODO: refactor as per your requirement
+    db_to_use = None
+    for processor_name in processor_order:
+        processor_config = next((p for p in channel_config['query_processor'] if p['name'] == processor_name), None)
+        if processor_config:
+            processor_params = processor_config['params']
+            processor_class = query_processors[processor_name]
+            if not processor_class:
+                return jsonify({'response': f"Unsupported processor {processor_name}"})
+
+            processor_llm_client = create_llm_client(processor_params['llm'])
+            processor = processor_class(template_loader=template_loader, llm=processor_llm_client)
+
+            # TODO: consider parameter and return value of routing might be difference from query translation & construction
+            if processor_name == "query_translator":
+                # Expect multiple queries as output
+                queries = processor.process(queries[0])  # Replace the initial query with the generated queries
+            elif processor_name == "query_logical_routing":
+                # Process the first query in case it's expected to be single (or adjust logic to handle multiple queries)
+                # TODO: implement logical routing
+                db_to_use = processor.process(queries[0], channel_config['db_configs'])
+            else:
+                # Process each query generated by the QueryTranslator
+                processed_queries = []
+                for query in queries:
+                    result = processor.process(query)
+                    if isinstance(result, list):
+                        processed_queries.extend(result)
+                    else:
+                        processed_queries.append(result)
+                queries = processed_queries
+
+    # At this point, queries should contain the final processed queries
+    # Connect to DB
+    if db_to_use:
+        db_class = db_classes.get(db_to_use['type'])
+        if not db_class:
+            return jsonify({'response': "Unsupported database type"})
+
+        if db_to_use['type'] == "vector":
+            db = db_class(db_to_use['path'], embeddings_model=db_to_use['embeddings_model'])
+        else:
+            db = db_class(db_to_use['path'])
+
+    # Search in DB
+    relevant_docs = db.search(prompt)
+    knowledge_text = "\n".join([doc.page_content for doc in relevant_docs])
     
     print("knowledge_text: " + knowledge_text)
 
     complete_prompt = prompt_template.format(knowledge=knowledge_text, question=prompt)
 
-    response = client.chat.completions.create(
-        model=Config.LLM_MODEL,
-        messages=[
-            {"role": "system", "content": "You are a support assistant for Automation Anywhere."},
-            {"role": "user", "content": complete_prompt}
-        ],
-        timeout=60  # Increase timeout to 60 seconds
-    )
+    if llm_type == "openai":
+        response = llm_client.chat.completions.create(
+            model=channel_config['llm']['model'],
+            messages=[
+                {"role": "system", "content": channel_config['system_prompt']},
+                {"role": "user", "content": complete_prompt}
+            ],
+            timeout=60  # Increase timeout to 60 seconds
+        )
+        api_response = response.choices[0].message.content ##openai
 
-    # response = ollama.chat(
-    #     model='llama3',
-    #     messages=[
-    #         {"role": "system", "content": "You are a support assistant for Automation Anywhere."},
-    #         {"role": "user", "content": complete_prompt}
-    #     ]
-    # )
-    # return jsonify({'response': response['message']['content']})
+    if llm_type == "ollama":
+        response = llm_client.chat(
+            model=channel_config['llm']['model'],
+            messages=[
+                {"role": "system", "content": channel_config['system_prompt']},
+                {"role": "user", "content": complete_prompt}
+            ]
+        )
+        api_response = response['message']['content'] ## Llama
 
-    api_response = response.choices[0].message.content
+    # return jsonify({'response': response['message']['content']})   
+
     if send_to_reviewer:
         add_pending_review(api_response, prompt)
         return jsonify({'response': api_response})
@@ -100,7 +163,6 @@ def chat(channel):
 
 @main.route('/pending_reviews')
 def pending_reviews():
-    # 返回待审核的响应
     return jsonify({'reviews': get_pending_reviews()})
 
 
@@ -112,26 +174,21 @@ def review():
     user_prompt = data.get('user_prompt', '')
 
     if action == 'approve':
-        # 将批准的响应发送回用户
         send_to_user(response, user_prompt)
         return jsonify({'response': response})
     elif action == 'reject':
-        # 将拒绝的响应发送回用户
         send_to_user("Sorry, it is out of my scope", user_prompt)
         return jsonify({'response': "Sorry, it is out of my scope"})
     elif action == 'pending':
-        # 将待审核的响应存储到全局变量或数据库
         add_pending_review(response, user_prompt)
         return jsonify({'status': 'pending'})
 
 
 @main.route('/user_responses')
 def user_responses():
-    # 返回所有用户的响应
     return jsonify({'responses': get_user_responses()})
 
 
-# 全局变量或数据库管理待审核响应
 pending_reviews = []
 user_responses = []
 
@@ -147,7 +204,7 @@ def add_pending_review(response, user_prompt):
 def get_user_responses():
     global user_responses
     responses = user_responses
-    user_responses = []  # 清空用户响应列表
+    user_responses = []
     return responses
 
 
