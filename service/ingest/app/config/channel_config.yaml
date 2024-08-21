@@ -1,0 +1,38 @@
+template_path: "app/prompt_templates/"
+
+channels:
+  confluence:
+    data_loader: "json_loader"
+    data_source: "data/confluence"
+    data_processor:
+      - name: "json_processor"
+        params: 
+          llm:
+            type: "ollama"
+            model: "llama3"
+            base_url: "http://localhost:11434/api/chat"
+            api_key: "your_openai_api_key"
+    db_configs:
+      - name: "vector_db"
+        type: "vector"
+        path: "faiss_index/confluence"
+        embeddings_model: "ollama"
+
+  sn:
+    data_loader: "json_loader"
+    data_source: "data/serviceNow"
+    data_processor:
+      - name: "json_processor"
+        params: 
+          llm:
+            type: "ollama"
+            model: "llama3"
+            base_url: "http://localhost:11434/api/chat"
+            api_key: "your_openai_api_key"
+    db_configs:
+      - name: "vector_db"
+        type: "vector"
+        path: "faiss_index/serviceNow"
+        embeddings_model: "ollama"
+
+  # Add more use case

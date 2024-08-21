@@ -1,7 +1,7 @@
-from base_processor import BaseProcessor
-from mul_representation_indexing import MulReprenIndexing
+from .base_processor import BaseProcessor
+from .mul_representation_indexing import MulReprenIndexing
 
-class PdfProcessor(BaseProcessor):
+class HtmlProcessor(BaseProcessor):
     def process(self, data):
         processed_data = []
         #Chunking
