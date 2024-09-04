@@ -9,7 +9,7 @@ function selectChannel(channel) {
     document.getElementById('user-input').style.display = 'flex';
 
     const chatbox = document.getElementById('chatbox');
-    chatbox.innerHTML += `<div class="message bot"><img src="/static/bot_icon.png" alt="Bot">You have selected ${channel === 'confluence' ? 'Knowledge Query' : 'Service Now Query'}.</div>`;
+    chatbox.innerHTML += `<div class="message bot"><img src="/ui/static/bot_icon.png" alt="Bot">You have selected ${channel === 'confluence' ? 'Knowledge Query' : 'Service Now Query'}.</div>`;
 }
 
 function switchChannel() {
@@ -32,13 +32,13 @@ async function sendMessage() {
 
     currentPrompt = userInput;
     const chatbox = document.getElementById('chatbox');
-    chatbox.innerHTML += `<div class="message user"><img src="/static/user_icon.png" alt="User">${userInput}</div>`;
+    chatbox.innerHTML += `<div class="message user"><img src="/ui/static/user_icon.png" alt="User">${userInput}</div>`;
     chatbox.scrollTop = chatbox.scrollHeight; // 滚动到最新消息
 
     // 显示等待消息
     waitingMessageElement = document.createElement('div');
     waitingMessageElement.className = 'message bot';
-    waitingMessageElement.innerHTML = `<img src="/static/bot_icon.png" alt="Bot">Please wait for a while for your answer to generate<span class="dots">...</span>`;
+    waitingMessageElement.innerHTML = `<img src="/ui/static/bot_icon.png" alt="Bot">Please wait for a while for your answer to generate<span class="dots">...</span>`;
     chatbox.appendChild(waitingMessageElement);
     chatbox.scrollTop = chatbox.scrollHeight; // 滚动到最新消息
 
@@ -73,7 +73,7 @@ async function sendMessage() {
     } else {
         // 直接显示响应
         chatbox.removeChild(waitingMessageElement); // 移除等待消息
-        chatbox.innerHTML += `<div class="message bot"><img src="/static/bot_icon.png" alt="Bot">${data.response}</div>`;
+        chatbox.innerHTML += `<div class="message bot"><img src="/ui/static/bot_icon.png" alt="Bot">${data.response}</div>`;
         chatbox.scrollTop = chatbox.scrollHeight; // 滚动到最新消息
     }
 }
@@ -88,7 +88,7 @@ async function checkUserResponses() {
             const chatbox = document.getElementById('chatbox');
             chatbox.removeChild(waitingMessageElement); // 移除等待消息
 
-            chatbox.innerHTML += `<div class="message bot"><img src="/static/bot_icon.png" alt="Bot">${res.response}</div>`;
+            chatbox.innerHTML += `<div class="message bot"><img src="/ui/static/bot_icon.png" alt="Bot">${res.response}</div>`;
             chatbox.scrollTop = chatbox.scrollHeight; // 滚动到最新消息
         });
     }

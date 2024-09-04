@@ -17,7 +17,7 @@ async function fetchPendingResponses() {
             reviewMessageElement = document.createElement('div');
             reviewMessageElement.className = 'message bot';
             reviewMessageElement.setAttribute('data-prompt', review.user_prompt);
-            reviewMessageElement.innerHTML = `<img src="/static/bot_icon.png" alt="Bot">${review.response}`;
+            reviewMessageElement.innerHTML = `<img src="/ui/static/bot_icon.png" alt="Bot">${review.response}`;
         }
 
         reviewbox.appendChild(reviewMessageElement);
