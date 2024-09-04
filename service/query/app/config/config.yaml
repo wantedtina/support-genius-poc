@@ -16,13 +16,13 @@ channels:
     prompt_template_routing: "prompt_template_routing"
     prompt_template_constructor: "prompt_template_constructor"
 
-  sn:
+  serviceNow:
     db_type: "vector"
     db_path: "faiss_index/serviceNow"
     query_processor: "query_processor_sql"
     data_retrieval: "reranking"
     prompt_template: "prompt_template"
-    prompt_template_translator: "prompt_template_translator"
-    prompt_template_routing: "prompt_template_routing"
-    prompt_template_constructor: "prompt_template_constructor"
+    prompt_template_translator: "prompt_sn_translator"
+    prompt_template_routing: "prompt_sn_routing"
+    prompt_template_constructor: "prompt_sn_constructor"
   # 可以继续添加更多Case

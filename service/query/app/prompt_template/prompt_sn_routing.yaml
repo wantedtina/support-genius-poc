@@ -1,0 +1,5 @@
+logic_routing_template: |
+  You are an expert at routing a user question to the appropriate data source.
+
+  Based on the question, route it to the relevant data source.
+  

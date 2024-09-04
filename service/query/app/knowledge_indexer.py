@@ -9,6 +9,7 @@ import json
 from langchain.schema import Document
 from datetime import datetime
 
+
 class KnowledgeIndexer:
     def __init__(self, source_folder_path, target_folder_path, file_type):
         self.source_folder_path = source_folder_path
@@ -91,6 +92,13 @@ class KnowledgeIndexer:
         results = self.collection.similarity_search(query=query, k=top_k)
         if channel == 'confluence':
             return results[0].page_content
-        elif channel == 'sn':
+        elif channel == 'serviceNow':
+            return results
+
+    def search2(self, channel, query, top_k=3):
+        results = self.collection.similarity_search(query=query, k=top_k)
+        if channel == 'confluence':
+            return results[0].page_content
+        elif channel == 'serviceNow':
             return results
         

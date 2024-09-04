@@ -3,10 +3,10 @@ import os.path
 from flask import Blueprint, request, jsonify, render_template
 from openai import OpenAI
 from .knowledge_indexer import KnowledgeIndexer
-from config import Config
+from service.query.config import Config
 import json
 import ollama
-from tools.prompt_loader import PromptLoader
+from service.query.tools.prompt_loader import PromptLoader
 import glob
 from datetime import date
 import yaml
@@ -58,7 +58,7 @@ def chat(channel):
         relevant_docs = knowledge_indexer_confluence.search(channel, prompt)
         prompt_template = prompt_template_confluence
         knowledge_text = "\n".join(relevant_docs)
-    elif channel == 'sn':
+    elif channel == 'serviceNow':
         relevant_docs = knowledge_indexer_sn.search(channel, prompt)
         prompt_template = prompt_template_sn
         knowledge_text = ''

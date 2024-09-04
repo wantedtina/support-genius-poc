@@ -8,6 +8,6 @@ from .es_db import EsDB
 __all__ = [
     "VectorDB",
     "SqlDB",
-    "GraphDB"，
+    "GraphDB",
     "EsDB"
 ]
