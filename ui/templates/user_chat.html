@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support Genius - User Chat</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="../static/styles.css">
 </head>
 <body>
     <div class="container">
@@ -13,30 +13,9 @@
             <div class="chat-container">
                 <div class="chat-header">
                     User Chat
-                    <button onclick="switchChannel()">Switch Channel</button>
                 </div>
                 <div id="chatbox" class="chat-box"></div>
-                <div class="chat-input" id="channel-selection">
-                    <p>Hi! I'm Support Genius! Please choose your support channel below first.</p>
-                    <div class="channel-buttons">
-                        <div class="channel-button">
-                            <button onclick="selectChannel('confluence')">Support Knowledge</button>
-                            <p>Access the knowledge base for information and troubleshooting guides</p>
-                        </div>
-                        <div class="channel-button">
-                            <button onclick="selectChannel('sn')">Service Now</button>
-                            <p>Get assistance with ServiceNow related queries and issues</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-input" id="user-input" style="display: none;">
-                    <div class="switch-container">
-                        <label class="switch">
-                            <input type="checkbox" id="reviewerSwitch">
-                            <span class="slider round"></span>
-                        </label>
-                        <span>Send to reviewer before reply</span>
-                    </div>
+                <div class="chat-input" id="user-input">
                     <input type="text" id="userInput" placeholder="Type your message here...">
                     <button onclick="sendMessage()">Send</button>
                 </div>
@@ -44,6 +23,6 @@
         </div>
     </div>
 
-    <script src="/static/scripts.js"></script>
+    <script src="../static/scripts.js"></script>
 </body>
 </html>

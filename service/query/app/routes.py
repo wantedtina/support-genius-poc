@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from openai import OpenAI
 import ollama
 from .utils.config_loader import load_config
@@ -9,8 +9,16 @@ from .db.graph_db import GraphDB
 from .db.sql_db import SqlDB
 from .db.vector_db import VectorDB
 from .data_retriever import Reranking
+from time import sleep
 
 main = Blueprint('main', __name__)
+
+# Setup a logger to store logs
+log_messages = []
+
+def log_message(message):
+    log_messages.append(message)
+    print(message)  # You can also log to console
 
 # Load Config
 config = load_config('app/config/channel_config.yaml')
@@ -56,9 +64,16 @@ def create_llm_client(llm_config):
 
 @main.route('/chat/<channel>', methods=['POST'])
 def chat(channel):
+    global log_messages
+    log_messages = []  # Clear previous logs
+    log_message("Starting to process your request...")
+    sleep(1)
     channel_config = config['channels'].get(channel)
     if not channel_config:
         return jsonify({'response': "Invalid channel"})
+    
+    log_message("Channel selected...")
+    sleep(1)
 
     data = request.json
     prompt = data.get('prompt', '')
@@ -153,6 +168,9 @@ def chat(channel):
 
     # return jsonify({'response': response['message']['content']})   
 
+    log_message("Response ready!")
+    sleep(1)
+
     if send_to_reviewer:
         add_pending_review(api_response, prompt)
         return jsonify({'response': api_response})
@@ -160,6 +178,14 @@ def chat(channel):
         send_to_user(api_response, prompt)
         return jsonify({'response': api_response})
 
+@main.route('/chat_logs/<channel>', methods=['GET'])
+def chat_logs(channel):
+    def generate_logs():
+        for message in log_messages:
+            yield f"data: {message}\n\n"
+            sleep(1)  # Simulate real-time streaming
+
+    return Response(generate_logs(), content_type='text/event-stream')
 
 @main.route('/pending_reviews')
 def pending_reviews():
