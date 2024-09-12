@@ -62,6 +62,7 @@ body {
     overflow-y: auto; /* Allows scrolling if the content is too large */
     background: #f9f9f9;
     word-wrap: break-word; /* Ensures long words break to the next line */
+    max-height: calc(100vh - 120px); /* Adjusts based on available viewport height */
 }
 
 /* Chat input section */
