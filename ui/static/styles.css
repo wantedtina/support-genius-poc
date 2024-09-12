@@ -99,7 +99,8 @@ body {
 
 /* Message bubbles */
 .message {
-    display: inline-block; /* Ensure bubble grows with text */
+    display: flex; /* Ensure bubble and content are aligned with flexbox */
+    align-items: center; /* Vertically center the content (icon and text) */
     margin: 10px 0;
     padding: 10px;
     border-radius: 5px;
@@ -111,12 +112,21 @@ body {
     clear: both;
 }
 
+/* Ensure the avatar image is properly aligned */
+.message img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 50%;
+    vertical-align: middle; /* Align image with the middle of the text */
+}
+
 /* User message bubble */
 .message.user {
     background: #003B70; /* Background color for user messages */
     color: white; /* Text color for user messages */
     float: right; /* Align user messages to the right */
-    clear: both;
+    justify-content: flex-end; /* Align content to the right */
     text-align: left;
 }
 
@@ -125,18 +135,9 @@ body {
     background: #f1f1f1; /* Background color for bot messages */
     color: black;
     float: left; /* Align bot messages to the left */
-    clear: both;
+    justify-content: flex-start; /* Align content to the left */
     text-align: left;
-    display: inline-block; /* Ensure bubble expands with text */
-}
-
-/* Ensure the avatar image is properly aligned */
-.message img {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    border-radius: 50%;
-    vertical-align: top; /* Align image with the top of the text */
+    display: flex; /* Ensure the bot message bubble expands with content */
 }
 
 /* Responsive design */
