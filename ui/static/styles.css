@@ -59,8 +59,9 @@ body {
 .chat-box {
     flex: 1;
     padding: 10px;
-    overflow-y: auto;
+    overflow-y: auto; /* Allows scrolling if the content is too large */
     background: #f9f9f9;
+    word-wrap: break-word; /* Ensures long words break to the next line */
 }
 
 /* Chat input section */
@@ -103,6 +104,10 @@ body {
     padding: 10px;
     border-radius: 5px;
     max-width: 85%;
+    word-wrap: break-word; /* Ensures long words break to the next line */
+    white-space: pre-wrap; /* Ensures spaces and newlines are respected */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Ensure long text has ellipsis (if needed) */
     text-align: left;
     clear: both;
 }
