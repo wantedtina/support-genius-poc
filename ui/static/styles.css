@@ -19,7 +19,7 @@ body {
 /* Full-width title */
 .title {
     font-size: 24px;
-    color: #003B70;
+    color: #003B70; /* Ateneo Blue */
     text-align: center;
     padding: 10px;
     background-color: #fff;
@@ -98,44 +98,44 @@ body {
 
 /* Message bubbles */
 .message {
-    display: flex;
-    align-items: center;
+    display: inline-block; /* Ensure bubble grows with text */
     margin: 10px 0;
     padding: 10px;
     border-radius: 5px;
-    max-width: 85%; /* Make sure messages don’t extend beyond 85% of container width */
+    max-width: 85%; /* Ensure message bubble does not exceed 85% of container width */
     word-wrap: break-word; /* Ensures long words break to the next line */
     white-space: pre-wrap; /* Ensures spaces and newlines are respected */
-    overflow: visible; /* Make sure all text is visible */
+    background-color: #f1f1f1; /* Default bot message background color */
     text-align: left;
     clear: both;
 }
 
+/* User message bubble */
+.message.user {
+    background: #003B70; /* Background color for user messages */
+    color: white; /* Text color for user messages */
+    float: right; /* Align user messages to the right */
+    clear: both;
+    text-align: left;
+}
+
+/* Bot message bubble */
+.message.bot {
+    background: #f1f1f1; /* Background color for bot messages */
+    color: black;
+    float: left; /* Align bot messages to the left */
+    clear: both;
+    text-align: left;
+    display: inline-block; /* Ensure bubble expands with text */
+}
+
+/* Ensure the avatar image is properly aligned */
 .message img {
     width: 30px;
     height: 30px;
     margin-right: 10px;
     border-radius: 50%;
-}
-
-.message.user {
-    background: #003B70;
-    color: white;
-    float: right;
-    justify-content: flex-end;
-}
-
-.message.user img {
-    order: 2;
-    margin-left: 10px;
-    margin-right: 0;
-}
-
-.message.bot {
-    background: #f1f1f1;
-    color: black;
-    float: left;
-    align-self: flex-start;
+    vertical-align: top; /* Align image with the top of the text */
 }
 
 /* Responsive design */
@@ -146,7 +146,7 @@ body {
     }
 
     .message {
-        max-width: 100%;
+        max-width: 100%; /* On smaller screens, allow message bubbles to take full width */
     }
 
     .chat-input input {
@@ -166,4 +166,36 @@ body {
     .chat-input button {
         font-size: 12px;
     }
+}
+
+/* Style for code blocks */
+.message code {
+    background-color: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Style for blockquotes */
+.message blockquote {
+    border-left: 4px solid #ccc;
+    padding-left: 10px;
+    color: #666;
+}
+
+/* Style for headings */
+.message h1, .message h2, .message h3 {
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Style for lists */
+.message ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.message ol {
+    list-style-type: decimal;
+    padding-left: 20px;
 }
