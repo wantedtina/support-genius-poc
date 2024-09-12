@@ -103,11 +103,10 @@ body {
     margin: 10px 0;
     padding: 10px;
     border-radius: 5px;
-    max-width: 85%;
+    max-width: 85%; /* Make sure messages don’t extend beyond 85% of container width */
     word-wrap: break-word; /* Ensures long words break to the next line */
     white-space: pre-wrap; /* Ensures spaces and newlines are respected */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Ensure long text has ellipsis (if needed) */
+    overflow: visible; /* Make sure all text is visible */
     text-align: left;
     clear: both;
 }
