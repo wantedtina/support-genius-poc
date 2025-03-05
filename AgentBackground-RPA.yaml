@@ -1,0 +1,143 @@
+  ApplicationOverview:  
+    Purpose: >  
+      The RPA platform provides Robotic Process Automation (RPA) capabilities to Citi business users. RPA developers use the platform (Automation Anywhere) to develop and test bots. These bots automate business use cases in production across three regional environments (NAM, APAC, EMEA) for global Citi internal users. It helps automate processes and remediate end-user computing tasks.  
+    Industry: Financial Services (Banking)  
+
+  TechnicalArchitecture:  
+    ArchitectureType: >  
+      Automation Anywhere (vendor product) installed on Windows server. The ecosystem development components are built using microservices architecture.  
+    TechnologyStack:  
+      Frontend: Not explicitly mentioned in provided document.  
+      Backend: Java using Spring Boot.  
+      Database: MS SQL Server (Control Room Database and Ecosystem Database)  
+      VendorSoftware: Automation Anywhere installed on Windows Server.  
+    Deployment: On-premises Windows Server 2019, SQL Server 2019.  
+    Components:  
+      ControlCentral: >  
+        Java Spring Boot service, provides bot runner VDI screen stream to the RPA bot user and command to execute tasks in VDI (e.g., reboot VDI, restart specific services, extract logs or files and send via email).  
+      RDPService: Builds RDP connection to bot runner VDI in the backend server.  
+      CredentialService: Retrieves passwords from CyberArk (internal password management).  
+      AuthenticationService: Provides Single Sign-On (SSO) for Control Central login.  
+      STEDataService: Allows applications and other services to access the database.  
+
+  DataFlowsAndIntegrations:  
+    DataMovement:  
+      EcosystemDatabase:  
+        Purpose: To be defined  
+        DataStored: To be defined  
+        TablesSchemas: To be defined  
+        DataMovementWithEcosystem: To be defined  
+      ControlRoomDatabase:  
+        Purpose: >  
+          Central to the Automation Anywhere platform. It stores configuration data, bot metadata, scheduling information, user credentials, audit logs, and runtime information.  
+        DataStored:  
+          - Bot definitions (workflows, tasks, scripts)  
+          - User accounts and roles  
+          - Schedules for bot execution  
+          - Runtime logs (execution status, errors, warnings)  
+          - Configuration settings for the Control Room and its components  
+          - Credentials (encrypted) for accessing systems and applications  
+          - Audit logs (user actions, system events)  
+        TablesSchemas:  
+          - Bots  
+          - Users  
+          - Schedules  
+          - Devices (Bot Runners)  
+          - Credentials  
+          - Logs  
+          - Settings  
+        DataMovementWithAutomationAnywhere:  
+          BotDevelopment:  
+            - Developers create bots within the Automation Anywhere development environment (part of the Control Room).  
+            - Bot definitions and metadata are stored in the Control Room Database.  
+          BotDeploymentAndScheduling:  
+            - Bots are deployed to Bot Runners (devices that execute the bots).  
+            - Scheduling information is stored in the Control Room Database.  
+            - At runtime, the Control Room instructs Bot Runners to execute specific bots based on the schedule.  
+          BotExecution:  
+            - Bot Runners retrieve bot definitions and credentials from the Control Room Database.  
+            - Bots interact with various systems (applications, databases, APIs) to automate tasks.  
+          DataInteractionDuringBotExecution:  
+            - Bots read data from and write data to applications, databases, and files.  
+            - Bots may interact with the Credential Service to fetch passwords from CyberArk.  
+            - Bots may use the STEData Service to read from or write to the Ecosystem Database.  
+          LoggingAndMonitoring:  
+            - Bot Runners send execution logs (status, errors, warnings) back to the Control Room.  
+            - The Control Room stores these logs in the Control Room Database.  
+            - Monitoring dashboards display data retrieved from the Control Room Database.  
+    DataFlowDiagram: To be provided  
+    ExternalIntegrations: >  
+      Needs more detailed explanation - Request clarification. Detail any third-party APIs or services used, specifically integrations with Office Suite, ERP, CRM, and legacy systems.  
+
+  UserRolesAndPermissions:  
+    UserRoles:  
+      - Developers  
+      - Testers  
+      - Business Users  
+    Permissions:  
+      - Role-based access control for bot creation, modification, and execution.  
+      - Access levels are based on the principle of least privilege.  
+      - Credential Management: Secure storage and management of credentials.  
+
+  MonitoringAndLogging:  
+    Tools:  
+      - ITRS Samler  
+      - ITRStrigger PowerShell Script to monitor Server and VDI  
+    Logs:  
+      - Control Room Logs stored in Application server  
+      - Ecosystem Logs stored in Application server  
+      - Bot Runner Logs and VDI Logs stored in VDIs  
+
+  Infrastructure:  
+    Setup:  
+      - 3 Windows servers as application servers build cluster node for Control Room  
+      - 2 Windows servers as application servers build cluster for Ecosystem application  
+      - 2 MS SQL Databases adopt Always On configuration  
+      - Network configurations adopt Citi internal network configuration.  
+    Capacity:  
+      ApplicationServers:  
+        Memory: 32 GB  
+        CPU: 8  
+
+  SecurityConfigurations:  
+    Measures:  
+      - ControlRoomAccess: Role-based access control, AD Password for user login.  
+      - ControlCentralAccess: Role-based access control, inherits from Control Room roles, Single Sign-On (SSO) for user login.  
+
+  BusinessProcesses:  
+    InteractionWithControlRoom:  
+      UserLogin: User logs in to Control Room with enterprise AD password.  
+      BotDevelopmentAndTesting:  
+        BotCreation: Use bot creator tool to develop bot.  
+        BotExportImport: Export & Import developed bot to package from Dev for promotion to UAT or Production.  
+        BotScheduling: >  
+          Through the Control Room, Emily schedules the bot to run every morning at 7:00 AM to process onboarding tasks received the previous day.  
+    InteractionWithControlCentral:  
+      Overview: >  
+        Control Central provides a secure and centralized platform for authorized users (e.g., RPA Admins, IT Analysts) to log in and manage Bot Runner VDIs.  
+      Process:  
+        - The user accesses the Control Central interface via a web browser or designated client software.  
+        - The user logs in using corporate credentials, verified through the Single Sign-On (SSO) feature provided by the Authentication Service.  
+        - Tasks performed in Control Central:  
+          - View Bot Runner VDI to monitor ongoing running bots.  
+          - Send commands to VDI for maintenance:  
+            - Reboot VDI  
+            - Restart bot runner agent  
+            - Export logs  
+
+  KnownIssuesAndHistory:  
+    PastProblems: To be filled when an incident occurs.  
+    ThirdPartyComponents: >  
+      Note the status and versions of external components, specifically Automation Anywhere.  
+
+  TestingEnvironments:  
+    TestCases: To be filled when an incident occurs.  
+    TestCoverage: >  
+      To be filled when an incident occurs. Bots are rigorously tested in the UAT environment.  
+
+  RCAAndSolutionInstructions:  
+    RootCause: To be filled during RCA.  
+    Solutions: To be filled during RCA.  
+    Risks: To be filled during RCA.  
+    Experts: To be filled during RCA.  
+    AdditionalData: To be filled during RCA.
